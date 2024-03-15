@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Hello World!</title>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    <style>
+      .comment {
+          margin-bottom: 20px;
+          padding: 10px;
+          border: 1px solid #ddd;
+          border-radius: 5px;
+      }
+      .comment img {
+          max-width: 50px;
+          border-radius: 50%;
+      }
+      .comment h4 {
+          margin: 0 0 10px 0;
+      }
+      .comment p {
+          margin: 0;
+      }
+  </style>
+</head>
+<body>
+   <button id="follow">关注</button>
+   <button id="getComment">获取评论</button>
+   <button id="postComment">发送评论</button>
+   <button id="like">点赞笔记</button>
+   <button id="collect">收藏笔记</button>
+   
+
+   <div id="comments"></div>
+   
+  <script src="./renderer.js"></script>
+</body>
+</html>
