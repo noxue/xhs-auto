@@ -1,38 +1,55 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Hello World!</title>
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
-    <style>
-      .comment {
-          margin-bottom: 20px;
-          padding: 10px;
-          border: 1px solid #ddd;
-          border-radius: 5px;
-      }
-      .comment img {
-          max-width: 50px;
-          border-radius: 50%;
-      }
-      .comment h4 {
-          margin: 0 0 10px 0;
-      }
-      .comment p {
-          margin: 0;
-      }
-  </style>
+	<meta charset="UTF-8">
+	<meta name="xel-theme" content="node_modules/xel/themes/cupertino.css">
+		<meta name="xel-accent-color" content="orange">
+		<meta name="xel-iconsets" content="node_modules/xel/iconsets/fluent.svg">
+	<title>Hello World!</title>
+	<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+	<style>
+		.comment {
+			margin-bottom: 20px;
+			padding: 10px;
+			border: 1px solid #ddd;
+			border-radius: 5px;
+		}
+		.comment img {
+			max-width: 50px;
+			border-radius: 50%;
+		}
+		.comment h4 {
+			margin: 0 0 10px 0;
+		}
+		.comment p {
+			margin: 0;
+		}
+	</style>
 </head>
 <body>
-   <button id="follow">关注</button>
-   <button id="getComment">获取评论</button>
-   <button id="postComment">发送评论</button>
-   <button id="like">点赞笔记</button>
-   <button id="collect">收藏笔记</button>
-   
+    <a href="./search.html">搜索</a>
+	<x-buttons tracking="-1">
+		<x-button id="follow">
+			<x-label>关注</x-label>
+		</x-button>
+		<x-button id="getComment">
+			<x-label>获取评论</x-label>
+		</x-button>
+		<x-button id="postComment">
+			<x-label>发表评论</x-label>
+		</x-button>
+		<x-button id="like">
+			<x-label>点赞</x-label>
+		</x-button>
+		<x-button id="collect">
+			<x-label>收藏</x-label>
+		</x-button>
+	</x-buttons>
 
-   <div id="comments"></div>
-   
-  <script src="./renderer.js"></script>
+
+	<div id="comments"></div>
+
+	<script src="node_modules/xel/xel.js" type="module"></script>
+	<script src="./renderer.js"></script>
 </body>
 </html>
