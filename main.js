@@ -65,10 +65,12 @@ function createWindow() {
         await post_comment("65e6dae40000000003034fcf", "222233", "", [at_user])
     });
 
-    ipcMain.on('test', async (event, arg) => {
+    ipcMain.on('like', async (event, arg) => {
+        await like("65e27e950000000003030b89");
+    });
 
-
-
+    ipcMain.on('collect', async (event, arg) => {
+        await collect("65e27e950000000003030b89");
     });
 
     const getCookieStr = async () => {
