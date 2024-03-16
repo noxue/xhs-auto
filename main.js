@@ -2,10 +2,14 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const fs = require('fs');
 const path = require('path');
 const iconv = require('iconv-lite');
+const {Db, Note, Comment, Like, Collect} = require('./db.js');
 
 
 
 function createWindow() {
+
+	const db = new Db('xhs_test.db');
+
 	const mainWindow = new BrowserWindow({
 		width: 800,
 		height: 600,
@@ -39,113 +43,120 @@ function createWindow() {
 	ipcMain.on('search', (event, arg) => {
 		// https://www.xiaohongshu.com/search_result?keyword=%25E4%25BD%25A0%25E5%25A5%25BD
 		view.webContents.loadURL(`https://www.xiaohongshu.com/search_result?keyword=${encodeURIComponent(arg)}`);
+	});
 
-			view.webContents.on('did-finish-load', async() => {
-				console.log('page loaded');
-				// 记录当前页面的坐标，页面滚动到最后，如果坐标有变化，就继续滚动，一直到滚动后的坐标不变
-				let lastY = 0;
-				let currentY = 0;
+	ipcMain.on('collect_search', (event, arg) => {
+		console.log('page loaded');
+		// 记录当前页面的坐标，页面滚动到最后，如果坐标有变化，就继续滚动，一直到滚动后的坐标不变
+		let lastY = 0;
+		let currentY = 0;
 
-                // 创建一个hashmap，用于存储笔记的信息
-                let all_notes = new Map();
-				const getPage = async () => {
-					// 滚动一个屏幕的高度
-					await view.webContents.executeJavaScript(`window.scrollTo(0, window.scrollY + window.innerHeight)`); 
+		// 创建一个hashmap，用于存储笔记的信息
+		
+		const getPage = async () => {
+			// 滚动一个屏幕的高度
+			
+			setTimeout(async() => {
+				currentY = await view.webContents.executeJavaScript(`window.scrollY`);
+				console.log("currentY", currentY, "lastY", lastY)
 
-					setTimeout(async() => {
-						currentY = await view.webContents.executeJavaScript(`window.scrollY`);
-						console.log("currentY", currentY, "lastY", lastY)
-
-						if (lastY == currentY) {
-                            console.log("滚动到底了")
-                            console.log(all_notes)
-							return;
-						}
-
-						try{
-							let notes = await getSearchedList();
-                            notes = extractNotesInfoFromHtml(notes);
-                            notes.forEach(note => {
-                                console.log(note.noteId)
-                                all_notes.set(note.noteId, note);
-                            });
-
-						}catch(e){
-							console.log("eeeeeeeeeeeeee:"+e)
-						}
-
-						lastY = currentY;
-
-						getPage();
-					}, 200);
+				if (lastY!=0 && lastY == currentY) {
+					console.log("滚动到底了")
+					
+					return;
 				}
 
-				setTimeout(() => {
-					getPage();
-					}, 1000);
+				try{
+					let notes = await getSearchedList();
+					notes = extractNotesInfoFromHtml(notes);
+					notes.forEach(note => {
+						console.log(note.noteId)
+						db.insertNoteData(new Note(note.noteId, note.title, note.link, note.coverImage, note.author.name, note.author.imageUrl, note.author.profileLink, note.author.userId, arg, new Date().getTime().toString()));
+					});
+					
 
-			});
+				}catch(e){
+					console.log("eeeeeeeeeeeeee:"+e)
+				}
 
+				lastY = currentY;
+
+				await view.webContents.executeJavaScript(`window.scrollTo(0, window.scrollY + window.innerHeight-140)`); 
+
+				await getPage();
+
+			}, 300);
+
+			
+
+		}
+
+		getPage();		
 	});
 
     const jsdom = require("jsdom");
     const { JSDOM } = jsdom;
 
-    function extractNotesInfoFromHtml(htmlString) {
-    const dom = new JSDOM(htmlString);
-    const doc = dom.window.document;
+	function extractNotesInfoFromHtml(htmlString) {
+		const dom = new JSDOM(htmlString);
+		const doc = dom.window.document;
+	
+		// 获取所有笔记项
+		const noteItems = doc.querySelectorAll('.note-item'); 
+		const notesData = [];
+	
+		// 遍历每个笔记项，提取信息
+		noteItems.forEach(item => {
+			const titleElement = item.querySelector('.title span');
+			const linkElement = item.querySelector('a.cover');
 
-    // 获取所有笔记项
-    const noteItems = doc.querySelectorAll('.note-item'); 
-    const notesData = [];
-
-    // 遍历每个笔记项，提取信息
-    noteItems.forEach(item => {
-        const titleElement = item.querySelector('.title span');
-        const linkElement = item.querySelector('a.cover');
-        const imageStyle = linkElement.style.backgroundImage;
-        const authorElement = item.querySelector('.author');
-        const authorProfileLinkElement = authorElement ? authorElement.href : null;
-        const authorImageElement = item.querySelector('.author-avatar');
-        const authorNameElement = item.querySelector('.name');
-
-        // 提取封面图URL
-        const imageUrlMatch = imageStyle.match(/url\("(.+?)"\)/);
-        const imageUrl = imageUrlMatch ? imageUrlMatch[1] : null;
-
-        // 提取用户编号
-        const userIdMatch = authorProfileLinkElement ? authorProfileLinkElement.match(/\/user\/profile\/([^\s\/]+)$/) : null;
-        const userId = userIdMatch ? userIdMatch[1] : null;
-
-        // 提取笔记编号
-        const noteIdMatch = linkElement ? linkElement.href.match(/\/search_result\/([^\s\/]+)$/) : null;
-        const noteId = noteIdMatch ? noteIdMatch[1] : null;
-
-        const noteData = {
-        title: titleElement ? titleElement.textContent : '',
-        link: linkElement ? linkElement.href : '',
-        coverImage: imageUrl,
-        noteId: noteId,
-        author: {
-            name: authorNameElement ? authorNameElement.textContent : '',
-            imageUrl: authorImageElement ? authorImageElement.src : '',
-            profileLink: authorProfileLinkElement,
-            userId: userId
-        }
-        };
-
-        notesData.push(noteData);
-    });
-
-    return notesData;
-    }
+			if(!linkElement) return;
+	
+			const authorElement = item.querySelector('.author');
+			const authorProfileLinkElement = authorElement ? authorElement.href : null;
+			const authorImageElement = item.querySelector('.author-avatar'); 
+			const authorNameElement = item.querySelector('.name');
+	
+			// 提取封面图URL
+			let itemHtml = item.outerHTML;
+			// background: url(&quot;http://sns-webpic-qc.xhscdn.com/202403161608/50ae116387d0e772b054b6235cd4bfbb/1000g0082f3q8mt4ha0005ok36ur8cl1kiom0cgo!nc_n_webp_mw_1&quot;)
+			// 正则提取出图片地址
+			const imageUrlMatch = itemHtml.match(/background: url\(&quot;(.+?)&quot;\)/);
+			const imageUrl = imageUrlMatch ? imageUrlMatch[1] : null;
+	
+			// 提取用户编号
+			const userIdMatch = authorProfileLinkElement ? authorProfileLinkElement.match(/\/user\/profile\/([^\s\/]+)$/) : null;
+			const userId = userIdMatch ? userIdMatch[1] : null;
+	
+			// 提取笔记编号
+			const noteIdMatch = linkElement ? linkElement.href.match(/\/search_result\/([^\s\/]+)$/) : null;
+			const noteId = noteIdMatch ? noteIdMatch[1] : null;
+	
+			const noteData = {
+			title: titleElement ? titleElement.textContent : '',
+			link: linkElement ? linkElement.href : '',
+			coverImage: imageUrl,
+			noteId: noteId,
+			author: {
+				name: authorNameElement ? authorNameElement.textContent : '',
+				imageUrl: authorImageElement ? authorImageElement.src : '',
+				profileLink: authorProfileLinkElement,
+				userId: userId
+			}
+			};
+	
+			notesData.push(noteData);
+		});
+	
+		return notesData;
+	}
+	
 
       
 
     const getSearchedList = async () => {
         // document.getElementsByClassName('feeds-container')[0].innerHTML
         let html = await view.webContents.executeJavaScript(`document.getElementsByClassName('feeds-container')[0].innerHTML`);
-        // console.log(html)
         return html
     }
 
@@ -161,11 +172,6 @@ function createWindow() {
 		let res = await comment("65f11f2c000000000d00e048");
 		let comments = res.data.comments;
 		console.log(JSON.stringify(comments))
-		// fs.writeFile("./1.json", JSON.stringify(comments), (err) => {
-		// if (err) throw err;
-		// console.log('已保存。');
-		// });
-
 		event.sender.send('comment-data', comments);
 	});
 
@@ -186,6 +192,8 @@ function createWindow() {
 	ipcMain.on('collect', async (event, arg) => {
 		await collect("65e27e950000000003030b89");
 	});
+
+
 
 	const getCookieStr = async () => {
 		let cookies = await view.webContents.session.cookies.get({});

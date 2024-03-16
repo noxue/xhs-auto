@@ -5,7 +5,7 @@
 	<meta name="xel-theme" content="node_modules/xel/themes/cupertino.css">
 		<meta name="xel-accent-color" content="orange">
 		<meta name="xel-iconsets" content="node_modules/xel/iconsets/fluent.svg">
-	<title>搜索</title>
+	<title>笔记列表</title>
 	<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
 	<!-- 列表添加样式 -->
 	<style>
@@ -15,20 +15,14 @@
 	</style>
 </head>
 <body>
-	<x-input id="search-input">
-        <x-icon href="#person"></x-icon>
-        <x-label>输入要搜索的关键词</x-label>
-    </x-input>
-	<x-button id="search-button">
-		<x-label>搜索</x-label>
-	</x-button>
+	
 	<x-button id="collect-button">
-		<x-label>开始采集</x-label>
+		<x-label>筛选</x-label>
 	</x-button>
 	<a href="./index.html">首页</a>
 	<!-- 笔记列表 -->
-	<div id="search-container"></div>
+	<div id="notes-container"></div>
 	<script src="node_modules/xel/xel.js" type="module"></script>
-	<script src="./search.js"></script>
+	<script src="./notes.js"></script>
 </body>
 </html>

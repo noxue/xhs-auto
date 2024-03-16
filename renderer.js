@@ -9,7 +9,7 @@ document.getElementById("getComment").addEventListener('click', () => {
     ipcRenderer.send('comment', '');
 })
 
-
+ 
 ipcRenderer.on('comment-data', (event, data) => {
     const commentsContainer = document.getElementById('comments');
     console.log("xxxxxxxxxxxxxxx")
