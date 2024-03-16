@@ -21,6 +21,11 @@ document.getElementById("collect-button").addEventListener('click', () => {
     ipcRenderer.send('collect_search', keyword);
 })
 
+// stop
+document.getElementById("stop-collect-button").addEventListener('click', () => {
+    ipcRenderer.send('collect_search_stop', '');
+})
+
 
 ipcRenderer.on('search-data', (event, data) => {
     const searchContainer = document.getElementById('search-container');

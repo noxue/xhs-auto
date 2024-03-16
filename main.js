@@ -11,8 +11,8 @@ function createWindow() {
 	const db = new Db('xhs_test.db');
 
 	const mainWindow = new BrowserWindow({
-		width: 800,
-		height: 600,
+		width: 1024,
+		height: 768,
 		webPreferences: {
 			nodeIntegration: true,
 			contextIsolation: false,
@@ -45,8 +45,15 @@ function createWindow() {
 		view.webContents.loadURL(`https://www.xiaohongshu.com/search_result?keyword=${encodeURIComponent(arg)}`);
 	});
 
+	let collect_search_stop = false;
+	ipcMain.on('collect_search_stop', (event, arg) => {
+		collect_search_stop = true;
+	});
+
+
 	ipcMain.on('collect_search', (event, arg) => {
-		console.log('page loaded');
+		collect_search_stop = false;
+		// console.log('page loaded');
 		// 记录当前页面的坐标，页面滚动到最后，如果坐标有变化，就继续滚动，一直到滚动后的坐标不变
 		let lastY = 0;
 		let currentY = 0;
@@ -54,14 +61,18 @@ function createWindow() {
 		// 创建一个hashmap，用于存储笔记的信息
 		
 		const getPage = async () => {
+
 			// 滚动一个屏幕的高度
-			
+			if(collect_search_stop){
+				return;
+			}
+
 			setTimeout(async() => {
 				currentY = await view.webContents.executeJavaScript(`window.scrollY`);
-				console.log("currentY", currentY, "lastY", lastY)
+				// console.log("currentY", currentY, "lastY", lastY)
 
 				if (lastY!=0 && lastY == currentY) {
-					console.log("滚动到底了")
+					// console.log("滚动到底了")
 					
 					return;
 				}
@@ -70,13 +81,13 @@ function createWindow() {
 					let notes = await getSearchedList();
 					notes = extractNotesInfoFromHtml(notes);
 					notes.forEach(note => {
-						console.log(note.noteId)
+						// console.log(note.noteId)
 						db.insertNoteData(new Note(note.noteId, note.title, note.link, note.coverImage, note.author.name, note.author.imageUrl, note.author.profileLink, note.author.userId, arg, new Date().getTime().toString()));
 					});
 					
 
 				}catch(e){
-					console.log("eeeeeeeeeeeeee:"+e)
+					// console.log("eeeeeeeeeeeeee:"+e)
 				}
 
 				lastY = currentY;
@@ -85,7 +96,7 @@ function createWindow() {
 
 				await getPage();
 
-			}, 300);
+			}, 500);
 
 			
 
@@ -171,7 +182,7 @@ function createWindow() {
 
 		let res = await comment("65f11f2c000000000d00e048");
 		let comments = res.data.comments;
-		console.log(JSON.stringify(comments))
+		// console.log(JSON.stringify(comments))
 		event.sender.send('comment-data', comments);
 	});
 
@@ -212,14 +223,14 @@ function createWindow() {
 		*/
 	const request = async (method, url, body) => {
 		let cookieStr = await getCookieStr();
-		console.log(body)
+		// // console.log(body)
 		// 获取url的path部分
 		let path = new URL(url).pathname;
 
 		let executeRes = await view.webContents.executeJavaScript(`window._webmsxyw("${path}", ${body})`);
-		console.log(executeRes)
-		console.log(executeRes['X-s'])
-		console.log(executeRes['X-t'])
+		// // console.log(executeRes)
+		// // console.log(executeRes['X-s'])
+		// // console.log(executeRes['X-t'])
 		let x_s = executeRes['X-s'];
 		let x_t = executeRes['X-t'];
 
@@ -252,11 +263,11 @@ function createWindow() {
 		let body = { target_user_id: uid }
 		let followRes = await request("post", "https://edith.xiaohongshu.com/api/sns/web/v1/user/follow", JSON.stringify(body))
 
-		console.log(followRes.statusText)
+		// console.log(followRes.statusText)
 		let res = await followRes.json();
-		console.log(res)
+		// console.log(res)
 		if (res.code == 0) {
-			console.log("关注成功")
+			// console.log("关注成功")
 			return true
 		}
 		console.error("关注失败:" + res.msg)
@@ -273,13 +284,13 @@ function createWindow() {
 		let commentRes = await request("get", `https://edith.xiaohongshu.com/api/sns/web/v2/comment/page?note_id=${note_id}&cursor=${cursor}&top_comment_id=&image_formats=jpg,webp,avif`, null)
 
 
-		console.log(commentRes.statusText)
+		// console.log(commentRes.statusText)
 		let res = await commentRes.json();
 
 		// let content = iconv.decode(res.data.comments[0].content, 'utf-8');
-		// console.log(content)
+		// // console.log(content)
 		if (res.code == 0) {
-			console.log("get comment success")
+			// // console.log("get comment success")
 			return res
 		}
 		console.error("get comment fail:" + res.msg)
@@ -287,6 +298,29 @@ function createWindow() {
 		return false
 
 	}
+
+	// 采集评论
+	ipcMain.on('getComment', async (event, noteId) => {
+		let res = await comment(noteId);
+		if (res.code != 0) {
+			alert("get comment failed")
+			return;
+		}
+		let comments = res.data.comments;
+		console.log("get comments:"+ res.data.comments.length)
+		event.sender.send('comment-data', comments);
+		while (res.data.has_more) {
+			res = await comment(noteId, res.cursor);
+			if (res.code != 0) {
+				alert("get comment failed")
+				return;
+			}
+			console.log("get more comments:"+ res.data.comments.length)
+			event.sender.send('comment-data', comments);
+		}
+
+		
+	});
 
 	/**
 		* 评论笔记
@@ -313,18 +347,18 @@ function createWindow() {
 
 		body = JSON.stringify(body)
 
-		console.log(body)
+		// console.log(body)
 
 		let postCommentRes = await request("post", "https://edith.xiaohongshu.com/api/sns/web/v1/comment/post", body)
 
 
 
 
-		console.log(postCommentRes.statusText)
+		// console.log(postCommentRes.statusText)
 		let res = await postCommentRes.json();
-		console.log(res)
+		// console.log(res)
 		if (res.code == 0) {
-			console.log("post comment success")
+			// console.log("post comment success")
 			return true
 		}
 		console.error("post comment error:" + res.msg)
@@ -343,15 +377,15 @@ function createWindow() {
 
 		body = JSON.stringify(body)
 
-		console.log(body)
+		// console.log(body)
 
 		let likeRes = await request("post", "https://edith.xiaohongshu.com/api/sns/web/v1/note/like", body)
 
-		console.log(likeRes.statusText)
+		// console.log(likeRes.statusText)
 		let res = await likeRes.json();
-		console.log(res)
+		// console.log(res)
 		if (res.code == 0) {
-			console.log("like success")
+			// console.log("like success")
 			return true
 		}
 		console.error("like error:" + res.msg)
@@ -364,15 +398,15 @@ function createWindow() {
 
 		body = JSON.stringify(body)
 
-		console.log(body)
+		// console.log(body)
 
 		let collectRes = await request("post", "https://edith.xiaohongshu.com/api/sns/web/v1/note/collect", body)
 
-		console.log(collectRes.statusText)
+		// console.log(collectRes.statusText)
 		let res = await collectRes.json();
-		console.log(res)
+		// console.log(res)
 		if (res.code == 0) {
-			console.log("collect success")
+			// console.log("collect success")
 			return true
 		}
 		console.error("collect error:" + res.msg)
@@ -380,15 +414,13 @@ function createWindow() {
 		return false
 
 	}
-
-
 }
 
 function saveHTML(html) {
 	const filePath = path.join(app.getPath('desktop'), '1.html'); // 定义文件路径
 	fs.writeFile(filePath, html, (err) => {
 		if (err) throw err;
-		console.log('HTML 已保存到桌面的 1.html 文件中。');
+		// console.log('HTML 已保存到桌面的 1.html 文件中。');
 	});
 }
 

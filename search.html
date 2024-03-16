@@ -7,25 +7,28 @@
 		<meta name="xel-iconsets" content="node_modules/xel/iconsets/fluent.svg">
 	<title>搜索</title>
 	<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
-	<!-- 列表添加样式 -->
-	<style>
-		#search-container img{
-			height:50px;
-		}
-	</style>
+	<link rel = "stylesheet" type = "text/css" href = "search.css" />
 </head>
 <body>
-	<x-input id="search-input">
-        <x-icon href="#person"></x-icon>
-        <x-label>输入要搜索的关键词</x-label>
-    </x-input>
-	<x-button id="search-button">
-		<x-label>搜索</x-label>
-	</x-button>
-	<x-button id="collect-button">
-		<x-label>开始采集</x-label>
-	</x-button>
 	<a href="./index.html">首页</a>
+	<div class="header">
+		<x-input id="search-input"  
+			auto-focus
+		>
+			<x-icon href="#person"></x-icon>
+			<x-label>输入要搜索的关键词</x-label>
+		</x-input>
+		<x-button id="search-button">
+			<x-label>搜索</x-label>
+		</x-button>
+		<x-button id="collect-button">
+			<x-label>开始采集</x-label>
+		</x-button>
+		<x-button id="stop-collect-button">
+			<x-label>停止采集</x-label>
+		</x-button>
+	</div>
+
 	<!-- 笔记列表 -->
 	<div id="search-container"></div>
 	<script src="node_modules/xel/xel.js" type="module"></script>

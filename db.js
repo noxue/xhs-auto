@@ -159,6 +159,24 @@ class Db {
                 });
             });
         }
+
+        // select note total count
+        /**
+            * select note total count
+            * @param {function} callback callback function
+            * @returns {number} note total count
+            **/
+        selectNoteTotalCount(callback) {
+            this.db.serialize(() => {
+                let sql = 'SELECT COUNT(*) AS count FROM notes';
+                this.db.get(sql, [], (err, row) => {
+                    if (err) {
+                        throw err;
+                    }
+                    callback(row.count);
+                });
+            });
+        }
 			// select note data by keyword pagination
 			/**
 				* select note data by keyword pagination
@@ -179,6 +197,7 @@ class Db {
 					});
 				});
 			}
+
 
 				// 列出表中的所有关键字，不重复
 				/**
@@ -240,6 +259,40 @@ class Db {
 					});
 				});
 			}
+
+            // query all comments pagination
+            /**
+                * query all comments pagination
+                * @param {number} page page number
+                * @param {number} pageSize page size
+                * @param {function} callback callback function
+                * @returns {Array} comment data
+                **/
+            queryAllCommentsPagination(page, pageSize, callback) {
+                this.db.serialize(() => {
+                    let sql = 'SELECT * FROM comments LIMIT ? OFFSET ?';
+                    this.db.all(sql, [pageSize, (page - 1) * pageSize],callback);
+                });
+            }
+
+            // get all comments count
+            /**
+                * get all comments count
+                * @param {function} callback callback function
+                * @returns {number} comment count
+                **/
+            getAllCommentsCount(callback) {
+                this.db.serialize(() => {
+                    let sql = 'SELECT COUNT(*) AS count FROM comments';
+                    this.db.get(sql, [], (err, row) => {
+                        if (err) {
+                            throw err;
+                        }
+                        callback(row.count);
+                    });
+                });
+            }
+
 
 			// select like data pagination
 			/**
