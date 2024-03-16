@@ -114,9 +114,36 @@ class Db {
 			*/
 		insertCommentData(comment) {
 			this.db.serialize(() => {
-				let stmt = this.db.prepare('INSERT INTO comments VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
-				stmt.run(comment.noteId, comment.commentId, comment.content, comment.commentTime, comment.userId, comment.userName, comment.userImageUrl, comment.userProfileLink, comment.isAuthor);
-				stmt.finalize();
+
+                // 如果commentId已经存在，就不插入
+                this.db.get('SELECT * FROM comments WHERE noteId = ? AND commentId = ?', [comment.noteId, comment.commentId], (err, row) => {
+                    if (err) {
+                        throw err;
+                    }
+                    if (row) {
+                        console.log('已存在');
+                        return;
+                    } else {
+                        console.log('不存在');
+                        this.db.run('INSERT INTO comments (noteId, commentId, content, commentTime, userId, userName, userImageUrl, userProfileLink, isAuthor) VALUES ($noteId, $commentId, $content, $commentTime, $userId, $userName, $userImageUrl, $userProfileLink, $isAuthor)', {
+                            $noteId: comment.noteId,
+                            $commentId: comment.commentId,
+                            $content: comment.content,
+                            $commentTime: comment.commentTime,
+                            $userId: comment.userId,
+                            $userName: comment.userName,
+                            $userImageUrl: comment.userImageUrl,
+                            $userProfileLink: comment.userProfileLink,
+                            $isAuthor: comment.isAuthor
+                        }, function(err) {
+                            if (err) {
+                                console.error(err.message);
+                            } else {
+                                console.log('Insert successful');
+                            }
+                        });
+                    }
+                });
 			});
 		}
 
@@ -151,11 +178,37 @@ class Db {
         queryAllNotes(page=1, pageSize=100, callback) {
             this.db.serialize(() => {
                 let sql = 'SELECT * FROM notes LIMIT ? OFFSET ?';
-                this.db.all(sql, [pageSize, (page - 1) * pageSize], (err, rows) => {
+                this.db.all(sql, [pageSize, (page - 1) * pageSize], callback);
+            });
+        }
+
+        // select note data pagination by hasComments == 0
+        /**
+            * select note data pagination by hasComments == 0
+            * @param {number} page page number
+            * @param {number} pageSize page size
+            * @param {function} callback callback function
+            * @returns {Array} note data
+            **/
+        selectNoteDataPaginationByNotHasComments(page, pageSize, callback) {
+            this.db.serialize(() => {
+                let sql = 'SELECT * FROM notes WHERE hasComments != 2 LIMIT ? OFFSET ?';
+                this.db.all(sql, [pageSize, (page - 1) * pageSize],callback);
+            });
+        }
+
+        // update note hasComments by note id
+        /**
+            * update note hasComments by note id
+            * @param {string} noteId note id
+            **/
+        updateNoteHasCommentsByNoteId(noteId, hasComments = 1) {
+            this.db.serialize(() => {
+                let sql = 'UPDATE notes SET hasComments = ? WHERE noteId = ?';
+                this.db.run(sql, [hasComments, noteId], (err) => {
                     if (err) {
                         throw err;
                     }
-                    callback(err, rows);
                 });
             });
         }
@@ -413,9 +466,10 @@ function initDb(db) {
 			8. 作者主页链接
 			9. 采集用的关键词
 			10. 采集时间
-            noteId, title, link, coverImage, authorId, authorName, authorImageUrl, authorProfileLink, keyword, collectTime
+            10. 是否采集了评论
+            noteId, title, link, coverImage, authorId, authorName, authorImageUrl, authorProfileLink, keyword, collectTime, hasComments
 		*/
-		db.run('CREATE TABLE IF NOT EXISTS notes (noteId TEXT KEY, title TEXT, link TEXT, coverImage TEXT, authorId TEXT, authorName TEXT, authorImageUrl TEXT, authorProfileLink TEXT, keyword TEXT, collectTime TEXT)');
+		db.run('CREATE TABLE IF NOT EXISTS notes (noteId TEXT KEY, title TEXT, link TEXT, coverImage TEXT, authorId TEXT, authorName TEXT, authorImageUrl TEXT, authorProfileLink TEXT, keyword TEXT, collectTime TEXT, hasComments INTEGER DEFAULT 0)');
 		// 创建一个表来获取评论的数据
 		/*
 		字段：

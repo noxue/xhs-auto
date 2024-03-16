@@ -299,20 +299,28 @@ function createWindow() {
 
 	}
 
+	let isStopComment = false;
+
+	ipcMain.on('stopComment', (event, arg) => {
+		isStopComment = true;
+	});
+
 	// 采集评论
 	ipcMain.on('getComment', async (event, noteId) => {
+		isStopComment = false;
+		console.log("get comment noteId:"+noteId)
 		let res = await comment(noteId);
 		if (res.code != 0) {
-			alert("get comment failed")
+			console.log("get comment failed")
 			return;
 		}
 		let comments = res.data.comments;
 		console.log("get comments:"+ res.data.comments.length)
 		event.sender.send('comment-data', comments);
-		while (res.data.has_more) {
+		while (!isStopComment && res.data.has_more) {
 			res = await comment(noteId, res.cursor);
 			if (res.code != 0) {
-				alert("get comment failed")
+				console.log("get comment failed")
 				return;
 			}
 			console.log("get more comments:"+ res.data.comments.length)

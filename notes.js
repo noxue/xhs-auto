@@ -87,6 +87,7 @@ function listAllNotes(page, pageSize) {
         <th>作者</th>
         <th>关键词</th>
         <th>采集时间</th>
+        <th>评论采集状态</th>
         </tr>`;
         notesContainer.appendChild(thead);
 
@@ -110,6 +111,11 @@ function listAllNotes(page, pageSize) {
             tr.appendChild(author);
             tr.appendChild(keyword);
             tr.appendChild(collectTime);
+
+            const commentStatus = document.createElement('td');
+            // 0=未采集 1=采集中 2=已采集
+            commentStatus.textContent = note.hasComments// == 0?"未采集":(note.hasComments == 1?"采集中":"已采集");
+            tr.appendChild(commentStatus);
             notesContainer.appendChild(tr);
         });
         
@@ -137,11 +143,23 @@ document.getElementById("collect-comment-button").addEventListener('click', () =
     collectComment();
 })
 
+let stopComment = false;
+// stop stopComment
+document.getElementById("stop-comment-button").addEventListener('click', () => {
+    stopComment = true;
+    ipcRenderer.send('stopComment', '');
+})
+
 function collectComment(){
     let noteCommentPage = 1;
     let noteCommentPageSize = 1;
+    stopComment = false;
     const timer = setInterval(() => {
-        db.queryAllNotes(noteCommentPage, noteCommentPageSize, (err, notes)=>{
+        if(stopComment){
+            clearInterval(timer);
+            return;
+        }
+        db.selectNoteDataPaginationByNotHasComments(noteCommentPage, noteCommentPageSize, (err, notes)=>{
             if (err) {
                console.error("errrrrrrr:"+err);
                return;
@@ -152,9 +170,14 @@ function collectComment(){
            }
    
            notes.forEach(note => {
+                if(stopComment){
+                    clearInterval(timer);
+                    return;
+                }
                console.log("get comment noteId:"+note.noteId)
                // 采集评论
                ipcRenderer.send('getComment', note.noteId);
+               db.updateNoteHasCommentsByNoteId(note.noteId);
                currentNote++;
            })
        })
@@ -207,5 +230,9 @@ ipcRenderer.on('comment-data', (event, data) => {
         }
     });
 
+    // db.updateNoteHasCommentsByNoteId(note.noteId);
+    if(comments.length > 0){
+        db.updateNoteHasCommentsByNoteId(comments[0].note_id, 2);
+    }
 });
 
