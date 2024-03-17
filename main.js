@@ -41,6 +41,12 @@ function createWindow() {
 	});
 
 	ipcMain.on('search', (event, arg) => {
+		// https://www.xiaohongshu.com/user/profile/633a6c5c000000001802dfaa
+		// if contains xiaohongshu.com then loadURL
+		if (arg.includes('xiaohongshu.com')) {
+			view.webContents.loadURL(arg);
+			return;
+		}
 		// https://www.xiaohongshu.com/search_result?keyword=%25E4%25BD%25A0%25E5%25A5%25BD
 		view.webContents.loadURL(`https://www.xiaohongshu.com/search_result?keyword=${encodeURIComponent(arg)}`);
 	});
@@ -140,8 +146,14 @@ function createWindow() {
 			const userId = userIdMatch ? userIdMatch[1] : null;
 	
 			// 提取笔记编号
-			const noteIdMatch = linkElement ? linkElement.href.match(/\/search_result\/([^\s\/]+)$/) : null;
-			const noteId = noteIdMatch ? noteIdMatch[1] : null;
+			let noteIdMatch = linkElement ? linkElement.href.match(/\/search_result\/([^\s\/]+)$/) : null;
+			let noteId = noteIdMatch ? noteIdMatch[1] : null;
+
+			if(!noteId){
+				// 从个人主页获取的，就要根据这个格式提取 <a data-v-2edb3dac="" href="/explore/65f328190000000013026bd8" style="display: none;"></a> 
+				noteIdMatch = itemHtml.match(/\/explore\/([^\s\/]+)\"/);
+				noteId = noteIdMatch ? noteIdMatch[1] : null;
+			}
 	
 			const noteData = {
 			title: titleElement ? titleElement.textContent : '',
@@ -171,13 +183,12 @@ function createWindow() {
         return html
     }
 
-	ipcMain.on('follow', (event, arg) => {
-
-		follow("5e91ab090000000001005db6");
-
-	});
-
-
+	ipcMain.on('follow', async (event, uid) => {
+		let res = await follow(uid);
+		console.log("follow result:"+JSON.stringify(res))
+		event.sender.send('follow-result', {uid:uid, res:res});
+	}); 
+	
 	ipcMain.on('comment', async (event, arg) => {
 
 		let res = await comment("65f11f2c000000000d00e048");
@@ -196,8 +207,9 @@ function createWindow() {
 		await post_comment("65e6dae40000000003034fcf", "222233", "", [at_user])
 	});
 
-	ipcMain.on('like', async (event, arg) => {
-		await like("65e27e950000000003030b89");
+	ipcMain.on('like', async (event, noteId) => {
+		let res = await like(noteId);
+		console.log(JSON.stringify(res))
 	});
 
 	ipcMain.on('collect', async (event, arg) => {
@@ -265,14 +277,7 @@ function createWindow() {
 
 		// console.log(followRes.statusText)
 		let res = await followRes.json();
-		// console.log(res)
-		if (res.code == 0) {
-			// console.log("关注成功")
-			return true
-		}
-		console.error("关注失败:" + res.msg)
-
-		return false
+		return res
 	}
 
 	/*** 成功则返回所有评论
@@ -318,7 +323,8 @@ function createWindow() {
 		console.log("get comments:"+ res.data.comments.length)
 		event.sender.send('comment-data', comments);
 		while (!isStopComment && res.data.has_more) {
-			res = await comment(noteId, res.cursor);
+			console.log("get more comments:noteId, res.cursor:"+noteId, res.data.cursor)
+			res = await comment(noteId, res.data.cursor);
 			if (res.code != 0) {
 				console.log("get comment failed")
 				return;
@@ -392,13 +398,8 @@ function createWindow() {
 		// console.log(likeRes.statusText)
 		let res = await likeRes.json();
 		// console.log(res)
-		if (res.code == 0) {
-			// console.log("like success")
-			return true
-		}
-		console.error("like error:" + res.msg)
-
-		return false
+		
+		return res
 	}
 
 	const collect = async (note_id) => {

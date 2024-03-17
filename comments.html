@@ -2,49 +2,79 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<meta name="xel-theme" content="node_modules/xel/themes/cupertino.css">
-		<meta name="xel-accent-color" content="orange">
-		<meta name="xel-iconsets" content="node_modules/xel/iconsets/fluent.svg">
 	<title>评论列表</title>
 	<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
-    <link rel = "stylesheet" type = "text/css" href = "comments.css" />
-	<!-- 列表添加样式 -->
-	<style>
-		#search-container img{
-			height:50px;
-		}
-	</style>
+    <link rel="stylesheet" href="photon/css/photon.min.css">
+	
 </head>
 <body>
-	<a href="./index.html">首页</a>
-    <div class="header">
-        <div>评论总数：<span id="comments-counts"></span></div>
-        <div>当前页：<span id="current-page"></span></div>
+    <div class="window">
+        <header class="toolbar toolbar-header">
+            <h1 class="title">评论列表</h1>
+          
+            <div class="toolbar-actions">
+              <div class="btn-group">
+                
+                <a class="btn btn-large btn-default" href="index.html">
+                    <span class="icon icon-home icon-text"></span> 首页
+                </a>
+                <!-- 笔记列表 -->
+                <a class="btn  btn-large btn-default" href="notes.html">
+                    <span class="icon icon-list icon-text"></span> 笔记列表
+                </a>
+                <!-- 评论列表 -->
+                <a class="btn active btn-large btn-default" href="comments.html">
+                    <span class="icon icon-list icon-text"></span> 评论列表
+                </a>
+                
+              </div>
+              <button class="btn btn-large btn-default pull-right">
+                <span class="icon icon-megaphone"></span> 联系客服
+              </button>
+            </div>
+        </header>
         
-        <x-buttons id="pagination">
+
+        <div class="window-content">
+            <div class="pane-group">
+              <div class="pane">
+    <div class="header">
+        
+        <div class="btn-group" style="margin:10px 20px">
+            
             <!-- 第一页 -->
-            <x-button id="first">
-                <x-label>第一页</x-label>
-            </x-button>
-            <x-button id="prev">
-                <x-label>上一页</x-label>
-            </x-button>
-            <x-button id="next">
-                <x-label>下一页</x-label>
-            </x-button>
-            <x-button id="last">
-                <x-label>最后一页</x-label>
-            </x-button>
-        </x-buttons>
-        <!-- 删除按钮 -->
-        <x-buttons id="delete">
-            <x-button id="delete-comments">
-                <x-label>删除所有评论</x-label>
-            </x-button>
-        </x-buttons>
+            <button class="btn btn-large btn-default" id="first">
+                第一页
+            </button>
+            <button class="btn btn-large btn-default" id="prev">
+                上一页
+            </button>
+            <button class="btn btn-large btn-default" id="next">
+                下一页
+            </button>
+            <button class="btn btn-large btn-default" id="last">
+                最后一页
+            </button>
+            <button  class="btn btn-large btn-negative" id="delete-comments">
+                删除所有评论
+            </button>
+            <!-- 关注 -->
+            <button class="btn btn-large btn-default" id="follow">
+                关注
+            </button>
+        </div>
     </div>
     
 	<div id="comments-container"></div>
+    </div>
+    </div>
+    </div>
+    <footer class="toolbar toolbar-footer">
+        <div>评论总数：<span id="comments-counts"></span>，当前页：<span id="current-page"></span></div>
+      </footer>
+    </div>
+
+    
     
 	<script src="node_modules/xel/xel.js" type="module"></script>
 	<script src="./comments.js"></script>

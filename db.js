@@ -192,7 +192,7 @@ class Db {
             **/
         selectNoteDataPaginationByNotHasComments(page, pageSize, callback) {
             this.db.serialize(() => {
-                let sql = 'SELECT * FROM notes WHERE hasComments != 2 LIMIT ? OFFSET ?';
+                let sql = 'SELECT * FROM notes WHERE hasComments <> 2 LIMIT ? OFFSET ?';
                 this.db.all(sql, [pageSize, (page - 1) * pageSize],callback);
             });
         }
@@ -345,6 +345,21 @@ class Db {
                     });
                 });
             }
+
+			// 查询出评论的用户，不重复，分页
+			/**
+				* 查询出评论的用户，不重复，分页
+				* @param {number} page page number
+				* @param {number} pageSize page size
+				* @param {function} callback callback function
+				* @returns {Array} user data
+				**/
+			selectCommentUserDataPagination(page, pageSize, callback) {
+				this.db.serialize(() => {
+					let sql = 'SELECT DISTINCT userId, userName FROM comments LIMIT ? OFFSET ?';
+					this.db.all(sql, [pageSize, (page - 1) * pageSize], callback);
+				});
+			}
 
 
 			// select like data pagination

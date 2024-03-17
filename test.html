@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Photon</title>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="photon/css/photon.min.css">
+
+    <!-- Javascript -->
+  </head>
+  <body>
+    <div class="window">
+
+      <!-- .toolbar-header sits at the top of your app -->
+      <header class="toolbar toolbar-header">
+        <h1 class="title">笔记列表</h1>
+      
+        <div class="toolbar-actions">
+          <div class="btn-group">
+            
+            <a class="btn btn-default" href="index.html">
+                <span class="icon icon-home icon-text"></span> 首页
+            </a>
+            <!-- 笔记列表 -->
+            <a class="btn btn-default" href="notes.html">
+                <span class="icon icon-list icon-text"></span> 笔记列表
+            </a>
+            <!-- 评论列表 -->
+            <a class="btn btn-default" href="comments.html">
+                <span class="icon icon-list icon-text"></span> 评论列表
+            </a>
+            
+          </div>
+          <button class="btn btn-default pull-right">
+            <span class="icon icon-megaphone"></span> 联系客服
+          </button>
+        </div>
+    </header>
+
+      <!-- Your app's content goes inside .window-content -->
+      <div class="window-content">
+        <div class="pane-group">
+         
+
+          <div class="pane">
+            <div class="header">
+              <div>笔记总数：<span id="notes-counts"></span></div>
+              <div>当前页：<span id="current-page"></span></div>
+              
+              <buttons id="pagination">
+                  <!-- 第一页 -->
+                  <button id="first">
+                      第一页
+                  </button>
+                  <button id="prev">
+                      上一页
+                  </button>
+                  <button id="next">
+                      下一页
+                  </button>
+                  <button id="last">
+                      最后一页
+                  </button>
+              </buttons>
+              <!-- 删除按钮 -->
+              <buttons id="delete">
+                  <button id="delete-notes">
+                      删除所有笔记
+                  </button>
+              </buttons>
+          </div>
+            <table class="table-striped">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Kind</th>
+                  <th>Date Modified</th>
+                  <th>Author</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>bars.scss</td>
+                  <td>Document</td>
+                  <td>Oct 13, 2015</td>
+                  <td>connors</td>
+                </tr>
+                <tr>
+                  <td>base.scss</td>
+                  <td>Document</td>
+                  <td>Oct 13, 2015</td>
+                  <td>connors</td>
+                </tr>
+                <tr>
+                  <td>button-groups.scss</td>
+                  <td>Document</td>
+                  <td>Oct 13, 2015</td>
+                  <td>connors</td>
+                </tr>
+                <tr>
+                  <td>buttons.scss</td>
+                  <td>Document</td>
+                  <td>Oct 13, 2015</td>
+                  <td>connors</td>
+                </tr>
+                <tr>
+                  <td>docs.scss</td>
+                  <td>Document</td>
+                  <td>Oct 13, 2015</td>
+                  <td>connors</td>
+                </tr>
+                <tr>
+                  <td>forms.scss</td>
+                  <td>Document</td>
+                  <td>Oct 13, 2015</td>
+                  <td>connors</td>
+                </tr>
+                <tr>
+                  <td>grid.scss</td>
+                  <td>Document</td>
+                  <td>Oct 13, 2015</td>
+                  <td>connors</td>
+                </tr>
+                <tr>
+                  <td>icons.scss</td>
+                  <td>Document</td>
+                  <td>Oct 13, 2015</td>
+                  <td>connors</td>
+                </tr>
+                <tr>
+                  <td>images.scss</td>
+                  <td>Document</td>
+                  <td>Oct 13, 2015</td>
+                  <td>connors</td>
+                </tr>
+                <tr>
+                  <td>lists.scss</td>
+                  <td>Document</td>
+                  <td>Oct 13, 2015</td>
+                  <td>connors</td>
+                </tr>
+                <tr>
+                  <td>mixins.scss</td>
+                  <td>Document</td>
+                  <td>Oct 13, 2015</td>
+                  <td>connors</td>
+                </tr>
+                <tr>
+                  <td>navs.scss</td>
+                  <td>Document</td>
+                  <td>Oct 13, 2015</td>
+                  <td>connors</td>
+                </tr>
+                <tr>
+                  <td>normalize.scss</td>
+                  <td>Document</td>
+                  <td>Oct 13, 2015</td>
+                  <td>connors</td>
+                </tr>
+                <tr>
+                  <td>photon.scss</td>
+                  <td>Document</td>
+                  <td>Oct 13, 2015</td>
+                  <td>connors</td>
+                </tr>
+                <tr>
+                  <td>tables.scss</td>
+                  <td>Document</td>
+                  <td>Oct 13, 2015</td>
+                  <td>connors</td>
+                </tr>
+                <tr>
+                  <td>tabs.scss</td>
+                  <td>Document</td>
+                  <td>Oct 13, 2015</td>
+                  <td>connors</td>
+                </tr>
+                <tr>
+                  <td>utilities.scss</td>
+                  <td>Document</td>
+                  <td>Oct 13, 2015</td>
+                  <td>connors</td>
+                </tr>
+                <tr>
+                  <td>variables.scss</td>
+                  <td>Document</td>
+                  <td>Oct 13, 2015</td>
+                  <td>connors</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

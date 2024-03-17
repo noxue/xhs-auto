@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="xel-theme" content="node_modules/xel/themes/cupertino.css">
+		<meta name="xel-accent-color" content="orange">
+		<meta name="xel-iconsets" content="node_modules/xel/iconsets/fluent.svg">
+	<title>搜索</title>
+	<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+	<link rel = "stylesheet" type = "text/css" href = "search.css" />
+</head>
+<body>
+	<a href="./index.html">首页</a>
+	<div class="header">
+	<x-input id="search-input" 
+		width="500px"
+		>
+			<x-icon href="#person"></x-icon>
+			<x-label>输入要搜索的关键词,或直接输入用户主页笔记列表页地址</x-label>
+		</x-input>
+	</div>
+	<div class="header">
+		
+		<x-button id="search-button">
+			<x-label>搜索</x-label>
+		</x-button>
+		<x-button id="collect-button">
+			<x-label>开始采集</x-label>
+		</x-button>
+		<x-button id="stop-collect-button">
+			<x-label>停止采集</x-label>
+		</x-button>
+	</div>
+
+	<!-- 笔记列表 -->
+	<div id="search-container"></div>
+	<script src="node_modules/xel/xel.js" type="module"></script>
+	<script src="./search.js"></script>
+</body>
+</html>

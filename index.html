@@ -7,51 +7,56 @@
 		<meta name="xel-iconsets" content="node_modules/xel/iconsets/fluent.svg">
 	<title>Hello World!</title>
 	<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
-	<style>
-		.comment {
-			margin-bottom: 20px;
-			padding: 10px;
-			border: 1px solid #ddd;
-			border-radius: 5px;
-		}
-		.comment img {
-			max-width: 50px;
-			border-radius: 50%;
-		}
-		.comment h4 {
-			margin: 0 0 10px 0;
-		}
-		.comment p {
-			margin: 0;
-		}
-	</style>
+	<link rel="stylesheet" href="photon/css/photon.min.css">
 </head>
 <body>
-    <a href="./search.html">搜索</a>
-    <a href="./notes.html">笔记列表</a>
-    <a href="./comments.html">评论列表</a>
-	<x-buttons tracking="-1">
-		<x-button id="follow">
-			<x-label>关注</x-label>
-		</x-button>
-		<x-button id="getComment">
-			<x-label>获取评论</x-label>
-		</x-button>
-		<x-button id="postComment">
-			<x-label>发表评论</x-label>
-		</x-button>
-		<x-button id="like">
-			<x-label>点赞</x-label>
-		</x-button>
-		<x-button id="collect">
-			<x-label>收藏</x-label>
-		</x-button>
-	</x-buttons>
+	<div class="window">
+		<header class="toolbar toolbar-header">
+			<h1 class="title">小红书营销工具</h1>
+			<div class="toolbar-actions">
+				<div class="btn-group">
+					<a class="btn active btn-large btn-default" href="index.html">
+						<span class="icon icon-home icon-text"></span> 首页
+					</a>
+					<a class="btn btn-large btn-default" href="search.html">
+						<span class="icon icon-search icon-text"></span> 搜索
+					</a>
+					<!-- 笔记列表 -->
+					<a class="btn  btn-large btn-default" href="notes.html">
+						<span class="icon icon-list icon-text"></span> 笔记列表
+					</a>
+					<!-- 评论列表 -->
+					<a class="btn btn-large btn-default" href="comments.html">
+						<span class="icon icon-list icon-text"></span> 评论列表
+					</a>
+				  </div>
+				  <button class="btn btn-large btn-default pull-right">
+					<span class="icon icon-megaphone"></span> 联系客服
+				  </button>
+				</div>
+			</div>
+		</header>
+		<!-- <x-buttons tracking="-1">
+			<x-button id="follow">
+				<x-label>关注</x-label>
+			</x-button>
+			<x-button id="getComment">
+				<x-label>获取评论</x-label>
+			</x-button>
+			<x-button id="postComment">
+				<x-label>发表评论</x-label>
+			</x-button>
+			<x-button id="like">
+				<x-label>点赞</x-label>
+			</x-button>
+			<x-button id="collect">
+				<x-label>收藏</x-label>
+			</x-button>
+		</x-buttons> -->
 
 
-	<div id="comments"></div>
-
-	<script src="node_modules/xel/xel.js" type="module"></script>
+		<!-- <div id="comments"></div> -->
+	</div>
 	<script src="./renderer.js"></script>
 </body>
 </html>

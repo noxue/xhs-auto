@@ -1,23 +1,113 @@
-body{
+/* <!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>搜索</title>
+	<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+	<link rel="stylesheet" href="photon/css/photon.min.css">
+</head>
+<body>
+	<div class="window">
+		<header class="toolbar toolbar-header">
+			<h1 class="title">小红书营销工具</h1>
+
+			<div class="toolbar-actions">
+				<div class="btn-group">
+					<a class="btn  btn-large btn-default" href="index.html">
+						<span class="icon icon-home icon-text"></span> 首页
+					</a>
+					<a class="btn active btn-large btn-default" href="search.html">
+						<span class="icon icon-search icon-text"></span> 搜索
+					</a>
+					<!-- 笔记列表 -->
+					<a class="btn  btn-large btn-default" href="notes.html">
+						<span class="icon icon-list icon-text"></span> 笔记列表
+					</a>
+					<!-- 评论列表 -->
+					<a class="btn btn-large btn-default" href="comments.html">
+						<span class="icon icon-list icon-text"></span> 评论列表
+					</a>
+						<button class="btn btn-large btn-default pull-right">
+					<span class="icon icon-megaphone"></span> 联系客服
+						</button>
+				</div>
+
+			</div>
+		</header>
+		<div class="window-content">
+			<div class="pane-group">
+				<div class="pane">
+				<div class="search-form">
+					<input type="text" id="search-input"  class="form-control" placeholder="请输入关键词或者作者笔记主页">
+
+					<div class="btns">
+
+						<button class="btn btn-large btn-positive" id="search-button">
+							搜索
+						</button>
+						<button  class="btn btn-large btn-positive" id="collect-button">
+							开始采集
+						</button>
+						<button  class="btn btn-large btn-positive" id="stop-collect-button">
+							停止采集
+						</button>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+
+	<script src="./search.js"></script>
+</body>
+</html>
+ */
+
+
+ /* 模仿谷歌浏览器的搜索框和搜索按钮的布局 */
+.search-form{
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
-    height: 100vh;
-}
-
-#search-container img{
-    height:50px;
-}
-
-/* header 中的元素 水平排列 */
-.header{
-    /* width: 80%; */
-    display: flex;
     align-items: center;
-    margin-bottom: 20px;
+    margin-top: 100px;
 }
 
-#notes-counts, #current-page{
-    padding-right: 20px;
+#search-input{
+    width: 500px;
+    height: 40px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 0 10px;
+    font-size: 16px;
+    outline: none;
 }
+
+.search-form .btns{
+    margin-left: 20px;
+}
+
+.search-form .btn{
+    width: 100px;
+    height: 40px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    outline: none;
+}
+
+#search-button{
+    background-color: #4285f4;
+    color: #fff;
+}
+
+#collect-button{
+    background-color: #34a853;
+    color: #fff;
+}
+
+#stop-collect-button{
+    background-color: #fbbc05;
+    color: #fff;
+}
+

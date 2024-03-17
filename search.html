@@ -2,36 +2,63 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<meta name="xel-theme" content="node_modules/xel/themes/cupertino.css">
-		<meta name="xel-accent-color" content="orange">
-		<meta name="xel-iconsets" content="node_modules/xel/iconsets/fluent.svg">
 	<title>搜索</title>
 	<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
-	<link rel = "stylesheet" type = "text/css" href = "search.css" />
+	<link rel="stylesheet" href="photon/css/photon.min.css">
+	<link rel="stylesheet" href="search.css">
 </head>
 <body>
-	<a href="./index.html">首页</a>
-	<div class="header">
-		<x-input id="search-input"  
-			auto-focus
-		>
-			<x-icon href="#person"></x-icon>
-			<x-label>输入要搜索的关键词</x-label>
-		</x-input>
-		<x-button id="search-button">
-			<x-label>搜索</x-label>
-		</x-button>
-		<x-button id="collect-button">
-			<x-label>开始采集</x-label>
-		</x-button>
-		<x-button id="stop-collect-button">
-			<x-label>停止采集</x-label>
-		</x-button>
+	<div class="window">
+		<header class="toolbar toolbar-header">
+			<h1 class="title">小红书营销工具</h1>
+
+			<div class="toolbar-actions">
+				<div class="btn-group">
+					<a class="btn  btn-large btn-default" href="index.html">
+						<span class="icon icon-home icon-text"></span> 首页
+					</a>
+					<a class="btn active btn-large btn-default" href="search.html">
+						<span class="icon icon-search icon-text"></span> 搜索
+					</a>
+					<!-- 笔记列表 -->
+					<a class="btn  btn-large btn-default" href="notes.html">
+						<span class="icon icon-list icon-text"></span> 笔记列表
+					</a>
+					<!-- 评论列表 -->
+					<a class="btn btn-large btn-default" href="comments.html">
+						<span class="icon icon-list icon-text"></span> 评论列表
+					</a>
+						<button class="btn btn-large btn-default pull-right">
+					<span class="icon icon-megaphone"></span> 联系客服
+						</button>
+				</div>
+
+			</div>
+		</header>
+		<div class="window-content">
+			<div class="pane-group">
+				<div class="pane">
+				<div class="search-form">
+					<input type="text" id="search-input" autofocus  class="form-control" placeholder="请输入关键词或者作者笔记主页">
+
+					<div class="btns">
+
+						<button class="btn btn-large btn-primary" id="search-button">
+							搜索
+						</button>
+						<button  class="btn btn-large btn-positive" id="collect-button">
+							开始采集
+						</button>
+						<button  class="btn btn-large btn-negative" id="stop-collect-button">
+							停止采集
+						</button>
+					</div>
+				</div>
+				
+			</div>
+		</div>
 	</div>
 
-	<!-- 笔记列表 -->
-	<div id="search-container"></div>
-	<script src="node_modules/xel/xel.js" type="module"></script>
 	<script src="./search.js"></script>
 </body>
 </html>

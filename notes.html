@@ -2,12 +2,9 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<meta name="xel-theme" content="node_modules/xel/themes/cupertino.css">
-		<meta name="xel-accent-color" content="orange">
-		<meta name="xel-iconsets" content="node_modules/xel/iconsets/fluent.svg">
 	<title>笔记列表</title>
 	<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
-    <link rel = "stylesheet" type = "text/css" href = "notes.css" />
+    <link rel="stylesheet" href="photon/css/photon.min.css">
 	<!-- 列表添加样式 -->
 	<style>
 		#search-container img{
@@ -16,49 +13,86 @@
 	</style>
 </head>
 <body>
-	<a href="./index.html">首页</a>
-	<!-- 笔记列表 -->
-    <div class="header">
-        <!-- 当前采集第几个笔记，采集到多少个评论，总共多少个笔记 -->
-        <div>当前采集第<span id="current-note"></span>个笔记，采集到<span id="current-comment"></span>个评论，总共<span id="total-note"></span>个笔记</div>
-        <x-button id="collect-comment-button">
-            <x-label>采集评论</x-label>
-        </x-button>
-        <!-- stop-comment-button -->
-        <x-button id="stop-comment-button">
-            <x-label>停止采集评论</x-label>
-        </x-button>
-    </div>
-    <div class="header">
-        <div>笔记总数：<span id="notes-counts"></span></div>
-        <div>当前页：<span id="current-page"></span></div>
+    <div class="window">
+        <header class="toolbar toolbar-header">
+            <h1 class="title">笔记列表</h1>
+          
+            <div class="toolbar-actions">
+              <div class="btn-group">
+                
+                <a class="btn btn-large btn-default" href="index.html">
+                    <span class="icon icon-home icon-text"></span> 首页
+                </a>
+                <!-- 笔记列表 -->
+                <a class="btn active btn-large btn-default" href="notes.html">
+                    <span class="icon icon-list icon-text"></span> 笔记列表
+                </a>
+                <!-- 评论列表 -->
+                <a class="btn btn-large btn-default" href="comments.html">
+                    <span class="icon icon-list icon-text"></span> 评论列表
+                </a>
+                
+              </div>
+              <button class="btn btn-large btn-default pull-right">
+                <span class="icon icon-megaphone"></span> 联系客服
+              </button>
+            </div>
+        </header>
         
-        <x-buttons id="pagination">
-            <!-- 第一页 -->
-            <x-button id="first">
-                <x-label>第一页</x-label>
-            </x-button>
-            <x-button id="prev">
-                <x-label>上一页</x-label>
-            </x-button>
-            <x-button id="next">
-                <x-label>下一页</x-label>
-            </x-button>
-            <x-button id="last">
-                <x-label>最后一页</x-label>
-            </x-button>
-        </x-buttons>
-        <!-- 删除按钮 -->
-        <x-buttons id="delete">
-            <x-button id="delete-notes">
-                <x-label>删除所有笔记</x-label>
-            </x-button>
-        </x-buttons>
+
+        <div class="window-content">
+            <div class="pane-group">
+              <div class="pane">
+        <!-- 笔记列表 -->
+        <div class="header">
+            <!-- 当前采集第几个笔记，采集到多少个评论，总共多少个笔记 -->
+            
+            
+        </div>
+        <div class="header">
+            
+            
+            <div class="btn-group" style="margin:10px 20px">
+                <button class="btn btn-large btn-positive"  id="collect-comment-button">
+                    <span class="icon icon-play icon-text"></span> 开始采集评论
+                </button>
+                <!-- stop-comment-button -->
+                <button  class="btn btn-large btn-warning" id="stop-comment-button">
+                    <span class="icon icon-stop icon-text"></span>停止采集评论
+                </button>
+                <!-- 第一页 -->
+                <button class="btn btn-large btn-default" id="first">
+                    第一页
+                </button>
+                <button class="btn btn-large btn-default" id="prev">
+                    上一页
+                </button>
+                <button class="btn btn-large btn-default" id="next">
+                    下一页
+                </button>
+                <button class="btn btn-large btn-default" id="last">
+                    最后一页
+                </button>
+                <button  class="btn btn-large btn-negative" id="delete-notes">
+                    删除所有笔记
+                </button>
+                <button  class="btn btn-large btn-default" id="like-notes">
+                    点赞所有笔记
+                </button>
+            </div>
+        </div>
+        <div class="pane">
+        <div id="notes-container"></div>
+        </div>
+        </div>
+        </div>
+    </div>
+    <footer class="toolbar toolbar-footer">
+        <div>当前页：<span id="current-page"></span>页，  笔记总数：<span id="notes-counts"></span></div>
+            <div>当前采集第<span id="current-note"></span>个笔记，采集到<span id="current-comment"></span>个评论，总共<span id="total-note"></span>个笔记</div>
+      </footer>
     </div>
     
-	<div id="notes-container"></div>
-    
-	<script src="node_modules/xel/xel.js" type="module"></script>
 	<script src="./notes.js"></script>
 	<script src="./notes-collect-comment.js"></script>
 </body>
