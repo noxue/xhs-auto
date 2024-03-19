@@ -151,9 +151,31 @@ document.getElementById("like-notes").addEventListener('click', () => {
 			
 		});
 		page++;
-	}, 200);
-
+	}, 1000);
 })
+
+document.getElementById("unlike-notes").addEventListener('click', () => {
+
+	let page = 1;
+	setInterval(() => {
+		// 查询出所有的笔记
+		db.queryAllNotes(page, 1, (err, rows) => {
+			if (err) {
+				console.error("errrrrrrr:"+err);
+				return;
+			}
+			let notes = rows;
+			notes.forEach(note => {
+				// 取消点赞
+				ipcRenderer.send('unlike', note.noteId);
+			})
+			
+		});
+		page++;
+	}, 100);
+})
+
+
 
 
 // =================笔记评论------------------------------

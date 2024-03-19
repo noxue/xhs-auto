@@ -836,10 +836,9 @@ function XSCommon(x_s, x_t) {
 
     // cookie key a1
     let a1 = 1;
-
-    // localstorage.getItem('b1')
-    let b1 = 1;
-
+    // 从cookie中获取a1
+    a1 = window.document.cookie.match(new RegExp('(^| )' + 'a1' + '=([^;]*)(;|$)')) ? unescape(window.document.cookie.match(new RegExp('(^| )' + 'a1' + '=([^;]*)(;|$)'))[2]) : null;
+    console.log("cookie a1:"+a1)
     let sc = getSigCount(true);
 
     var h = {
@@ -850,11 +849,11 @@ function XSCommon(x_s, x_t) {
         x2: "Windows",
         x3: "xhs-pc-web",
         x4: "4.5.3",
-        x5: '',
+        x5: a1,
         x6: x_t,
         x7: x_s,
         x8: localStorage.getItem('b1'),
-        x9: 123456,
+        x9: a1,
         x10: sc,
     };
 

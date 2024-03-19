@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const iconv = require('iconv-lite');
 const {Db, Note, Comment, Like, Collect} = require('./db.js');
-
+const {PostComment, AtUser} = require('./types.js');
 
 
 function createWindow() {
@@ -197,19 +197,33 @@ function createWindow() {
 		event.sender.send('comment-data', comments);
 	});
 
-	ipcMain.on('post_comment', async (event, arg) => {
-		let at_user = {
-			user_id: "593766f182ec397e73c90f85",
-			nickname: "你好啊"
-		}
-		let at_users = []
-		at_users.push(at_user)
-		await post_comment("65e6dae40000000003034fcf", "222233", "", [at_user])
+	
+	ipcMain.on('post-comment', 
+	/**
+	 * 
+	 * @param {*} event 
+	 * @param {PostComment} arg 
+	 */
+	async (event, arg) => {
+		// let at_user = {
+		// 	user_id: "593766f182ec397e73c90f85",
+		// 	nickname: "你好啊"
+		// }
+		// let at_users = []
+		// at_users.push(at_user)
+		// await post_comment("65e6dae40000000003034fcf", "222233", "", [at_user])
+		let res = await post_comment(arg.noteId, arg.content, arg.targetCommentId, arg.atUsers);
+		console.log("post comment result:"+JSON.stringify(res))
 	});
 
 	ipcMain.on('like', async (event, noteId) => {
 		let res = await like(noteId);
-		console.log(JSON.stringify(res))
+		console.log("like:"+noteId+"    "+JSON.stringify(res))
+	});
+
+	ipcMain.on('unlike', async (event, noteId) => {
+		let res = await unlike(noteId);
+		console.log("like:"+noteId+"    "+JSON.stringify(res))
 	});
 
 	ipcMain.on('collect', async (event, arg) => {
@@ -344,9 +358,6 @@ function createWindow() {
 		*/
 	const post_comment = async (note_id, content, target_comment_id = "", at_users = []) => {
 
-
-
-
 		let body = { "note_id": note_id, "content": content, "target_comment_id": target_comment_id, "at_users": at_users }
 		if (target_comment_id == "") {
 			body = { "note_id": note_id, "content": content, "at_users": at_users }
@@ -397,6 +408,23 @@ function createWindow() {
 
 		// console.log(likeRes.statusText)
 		let res = await likeRes.json();
+		// console.log(res)
+		
+		return res
+	}
+
+	const unlike = async (note_oid) => {
+
+		let body = { "note_oid": note_oid }
+
+		body = JSON.stringify(body)
+
+		// console.log(body)
+
+		let unlikeRes = await request("post", "https://edith.xiaohongshu.com/api/sns/web/v1/note/dislike", body)
+
+		// console.log(likeRes.statusText)
+		let res = await unlikeRes.json();
 		// console.log(res)
 		
 		return res

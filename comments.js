@@ -1,6 +1,6 @@
 const {Db, Note, Comment, Like, Collect} = require('./db.js');
 const {ipcRenderer} = require('electron');
-
+const {PostComment, AtUser} = require('./types.js');
 
 let db = new Db('xhs_test.db');
 
@@ -147,3 +147,24 @@ document.getElementById('follow').addEventListener('click', ()=>{
 ipcRenderer.on('follow-result', (event, arg) => {
     console.log(arg);
 });
+
+
+document.getElementById('post-comment').addEventListener('click', ()=>{
+    let page = 1;
+    let pageSize = 1;
+
+    setInterval(() => {
+        db.selectNoteDataPaginationByNotHasComments(page, pageSize, (err, rows) => {
+            if (err) {
+                console.error("errrrrrrr:"+err);
+                return;
+            }
+            let notes = rows;
+            notes.forEach(note => {
+                let comment = new PostComment(note.noteId, "有需要直接私信我", "", [new AtUser("5b9c666e398e4d000138dcb2","点击这里私信我，买同款软件")]);
+                ipcRenderer.send('post-comment', comment);
+            });
+        });
+        page++;
+    }, 3000);  
+})
